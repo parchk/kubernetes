@@ -350,6 +350,17 @@ func (s componentStatusStorage) serversToValidate() map[string]*componentstatus.
 			continue
 		}
 		if etcdUrl.Scheme == "unix" {
+
+			if etcdUrl.Hostname() == "kine.sock" {
+
+				serversToValidate["data-storage"] = &componentstatus.Server{
+					TLSConfig:    machine.TLSConfig,
+					KineEndpoint: machine.Server,
+					Path:         "/health",
+					Validate:     etcd3.EtcdHealthCheck,
+				}
+			}
+
 			continue
 		}
 		var port int
